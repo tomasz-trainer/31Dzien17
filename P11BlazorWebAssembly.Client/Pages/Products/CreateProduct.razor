@@ -1,0 +1,41 @@
+﻿@page "/products/createproduct"
+
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+<h3>CreateProduct</h3>
+
+@if (ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+
+
+<ProductForm Product="@Product" OnValidSubmit="@OnValidSubmit" />
+
+@code {
+
+    Product Product { get; set; } = new Product();
+    string? ErrorMessage { get; set; } = null;
+
+    private async Task OnValidSubmit()
+    {
+        try
+        {
+            var response = await ProductService.CreateProductAsync(Product);
+            if (response.Success)
+            {
+                NavigationManager.NavigateTo("/products/productslist");
+            }
+            else
+            {
+                ErrorMessage = $"Failed to create product";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+
+
+}

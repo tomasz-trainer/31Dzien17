@@ -20,11 +20,16 @@ namespace P06Shop.Shared
     { 
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Title is required.")]
+        [MaxLength(100, ErrorMessage = "Title cannot exceed 100 characters.")]
         public string Title { get; set; }
+
+        [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; }
 
         public string Barcode { get; set; }
 
+        [Range(0.01, 9999.99, ErrorMessage = "Price must be greater than 0 and less than 9999.99.")]
         public double Price { get; set; }
 
         public DateTime ReleaseDate { get; set; }

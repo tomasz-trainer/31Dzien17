@@ -1,0 +1,46 @@
+﻿<h3>ProductForm</h3>
+
+
+<EditForm Model="@Product" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    
+    
+    <div class="form-group">
+        <label for="title">Title</label>
+        <InputText id="title" class="form-control" @bind-Value="Product.Title" />
+    </div>
+
+    <div class="form-group">
+        <label for="barcode">Barcode</label>
+        <InputTextArea id="barcode" class="form-control" @bind-Value="Product.Barcode" />
+    </div>
+
+    <div class="form-group">
+        <label for="description">Description</label>
+        <InputTextArea id="description" class="form-control" @bind-Value="Product.Description" />
+    </div>
+
+    <div class="form-group">
+        <label for="price">Price</label>
+        <InputNumber id="price" class="form-control" @bind-Value="Product.Price" />
+    </div>
+ 
+    <div class="form-group">
+        <label for="releaseDate">Release Date</label>
+        <InputNumber id="releaseDate" class="form-control" @bind-Value="Product.ReleaseDate" />
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+
+</EditForm>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public Product Product { get; set; } = default;
+
+    public EventCallback OnValidSubmit { get; set; }
+}
