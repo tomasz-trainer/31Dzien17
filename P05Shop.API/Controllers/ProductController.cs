@@ -21,6 +21,8 @@ namespace P05Shop.API.Controllers
         {
             //ProductService productService = new ProductService();
 
+            Task.Delay(1000).Wait(); // symulacja opóźnienia 1 sekundy
+
             var result = await _productService.GetProductsAsync();
 
             if (result.Success)

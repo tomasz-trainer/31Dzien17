@@ -1,0 +1,55 @@
+﻿@page "/products/productslist"
+
+@inject IProductService ProductService
+
+<h3>ProductsList</h3>
+
+@if (products ==null)
+{
+    <p>@message</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Barcode</th>
+            <th>Price</th>
+            <th>ReleaseDate</th>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Id</td>
+                    <td>@product.Title</td>
+                    <td>@product.Barcode</td>
+                    <td>@product.Price</td>
+                    <td>@product.ReleaseDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    List<Product>? products;
+    string message = "Loading products...";
+
+    override protected async Task OnInitializedAsync()
+    {
+        var response = await ProductService.GetProductsAsync();
+        
+        if (response.Success)
+        {
+            products = response.Data;
+        }
+        else
+        {
+            message  = "Server error, can't download products data";
+        }
+    }
+
+}
