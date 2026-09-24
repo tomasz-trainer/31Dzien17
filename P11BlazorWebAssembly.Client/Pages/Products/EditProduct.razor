@@ -1,0 +1,76 @@
+﻿@page "/products/editproduct/{Id:int}"
+
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+<h3>EditProduct</h3>
+
+@if (message != null)
+{
+    <div class="alert alert-danger">@message</div>
+}
+else if (product == null)
+{
+    <p>Loading product...</p>
+}
+else
+{
+    <ProductForm Product="@product" OnValidSubmit="HandleValidSubmit" />
+    <button class="btn btn-danger" @onclick="HandleDelete">Delete Product</button>
+    
+}
+
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    Product? product;
+    string? message;
+
+    override protected async Task OnInitializedAsync()
+    {
+        var response  = await ProductService.GetProductAsync(Id);
+        if (response.Success)
+        {
+            product = response.Data;
+        }
+        else
+        {
+            message = $"Failed to load product with ID {Id}";
+        }
+    }
+
+    async Task HandleValidSubmit()
+    {
+        if (product != null)
+        {
+            var response = await ProductService.UpdateProductAsync(product);
+            if (response.Success)
+            {
+                message = "Product updated successfully!";
+            }
+            else
+            {
+                message = $"Failed to update product with ID {Id}";
+            }
+        }
+    }
+
+    async Task HandleDelete()
+    {
+        var response = await ProductService.DeleteProductAsync(Id);
+        if (response.Success)
+        {
+            message = "Product deleted successfully!";
+            product = null; // Clear the product to show the loading message
+            await Task.Delay(2000); // Optional: Wait for 2 seconds before navigating away
+            NavigationManager.NavigateTo("/products/productslist");
+        }
+        else
+        {
+            message = $"Failed to delete product with ID {Id}";
+        }
+    }
+}

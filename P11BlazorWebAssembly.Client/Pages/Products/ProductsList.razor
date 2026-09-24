@@ -1,8 +1,12 @@
 ﻿@page "/products/productslist"
 
 @inject IProductService ProductService
+@inject NavigationManager NavigationManager
 
 <h3>ProductsList</h3>
+
+<p><NavLink href="products/createproduct" class="btn btn-primary">New product</NavLink></p>
+
 
 @if (products ==null)
 {
@@ -12,11 +16,14 @@ else
 {
     <table class="table">
         <thead>
-            <th>Id</th>
-            <th>Title</th>
-            <th>Barcode</th>
-            <th>Price</th>
-            <th>ReleaseDate</th>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Barcode</th>
+                <th>Price</th>
+                <th>ReleaseDate</th>
+                <th>Options</th>
+            </tr>
         </thead>
         <tbody>
             @foreach (var product in products)
@@ -27,6 +34,7 @@ else
                     <td>@product.Barcode</td>
                     <td>@product.Price</td>
                     <td>@product.ReleaseDate.ToShortDateString()</td>
+                    <td><button class="btn btn-primary" @onclick="() =>EditProduct(product.Id)">Edit</button></td>
                 </tr>
             }
         </tbody>
@@ -52,4 +60,9 @@ else
         }
     }
 
+    void EditProduct(int productId)
+    {
+        // Navigate to the edit product page with the product ID
+        NavigationManager.NavigateTo($"/products/editproduct/{productId}");
+    }
 }

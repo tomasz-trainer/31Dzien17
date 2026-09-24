@@ -1,7 +1,7 @@
 ﻿<h3>ProductForm</h3>
 
 
-<EditForm Model="@Product" OnValidSubmit="@OnValidSubmit">
+<EditForm Model="@Product" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
     
@@ -28,7 +28,7 @@
  
     <div class="form-group">
         <label for="releaseDate">Release Date</label>
-        <InputNumber id="releaseDate" class="form-control" @bind-Value="Product.ReleaseDate" />
+        <InputDate id="releaseDate" class="form-control" @bind-Value="Product.ReleaseDate" />
     </div>
 
 
@@ -42,5 +42,6 @@
     [Parameter, EditorRequired]
     public Product Product { get; set; } = default;
 
+    [Parameter, EditorRequired]
     public EventCallback OnValidSubmit { get; set; }
 }
