@@ -48,6 +48,14 @@ namespace P03WeatherForecastWPF.Client.Services
             return result;
         }
 
+        public Task<ServiceResponse<List<Product>>> SearchProductsAsync(string? text, int page, int pageSize)
+        {
+            var url = $"api/product/search?text={text}&page={page}&pageSize={pageSize}";
+            var response = _httpClient.GetAsync(url);
+            var result = response.Result.Content.ReadFromJsonAsync<ServiceResponse<List<Product>>>();
+            return result;
+        }
+
         public async Task<ServiceResponse<Product>> UpdateProductAsync(Product product)
         {
             var response = await _httpClient.PutAsJsonAsync("api/product", product);

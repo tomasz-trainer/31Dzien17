@@ -138,6 +138,33 @@ namespace P05Shop.API.Services
             return result;
         }
 
+        public async Task<ServiceResponse<List<Product>>> SearchProductsAsync(string? text, int page, int pageSize)
+        {
+            var result = new ServiceResponse<List<Product>>();
+            try
+            {
+                IQueryable<Product> query = _dataContext.Products;
+
+                if (!string.IsNullOrEmpty(text))
+                {
+                    query = query.Where(p => p.Title.Contains(text) || p.Description.Contains(text));
+                }
+
+                result.Data = await query.OrderBy(x=>x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                result.Success = true;
+                result.Message = "Products retrieved successfully.";
+
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = $"An error occurred while searching for products: {ex.Message}";
+            }
+
+            return result;
+        }
+
         public async Task<ServiceResponse<Product>> UpdateProductAsync(Product product)
         {
             var result = new ServiceResponse<Product>();

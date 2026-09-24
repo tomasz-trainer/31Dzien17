@@ -65,7 +65,7 @@ namespace P05Shop.API.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<ServiceResponse<Product>>> GetProductById([FromRoute] int id)
         {
             var result = await _productService.GetProductAsync(id);
@@ -100,6 +100,21 @@ namespace P05Shop.API.Controllers
         public async Task<ActionResult<ServiceResponse<bool>>> DeleteProductOneQuery([FromQuery] int id)
         {
             var result = await _productService.DeleteProductAsync(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NotFound(result);
+            }
+        }
+
+        //https://localhost:5001/api/product/search?text=product&page=1&pageSize=10
+        [HttpGet("search")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> SearchProducts([FromQuery] string? text, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var result = await _productService.SearchProductsAsync(text, page, pageSize);
             if (result.Success)
             {
                 return Ok(result);
