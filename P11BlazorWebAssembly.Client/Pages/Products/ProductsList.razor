@@ -60,6 +60,7 @@ else
     List<Product>? products;
     string message = "Loading products...";
     string searchTerm = string.Empty;
+    int totalCount;
 
     int currentPage = 1;
     const int pageSize = 10;
@@ -67,7 +68,7 @@ else
     // liczba wszystkich stron, minimum 1, żeby nie pokazywać "Strona 1 z 0" przy pustej liście
     int TotalPages => products == null || products.Count == 0
         ? 1
-        : (int)Math.Ceiling(products.Count / (double)pageSize);
+        : (int)Math.Ceiling(totalCount / (double)pageSize);
 
 
 
@@ -112,7 +113,8 @@ else
             var response = await ProductService.SearchProductsAsync(searchTerm,currentPage,pageSize);
             if (response.Success)
             {
-                products = response.Data;
+                products = response.Data.Items;
+                totalCount = response.Data.TotalCount;
             }else
             {
                 products = new List<Product>();

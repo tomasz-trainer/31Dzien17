@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using P05Shop.API.Models;
 using P06Shop.Shared;
 using P06Shop.Shared.Services.ProductService;
@@ -138,9 +139,9 @@ namespace P05Shop.API.Services
             return result;
         }
 
-        public async Task<ServiceResponse<List<Product>>> SearchProductsAsync(string? text, int page, int pageSize)
+        public async Task<ServiceResponse<PagedResult<Product>>> SearchProductsAsync(string? text, int page, int pageSize)
         {
-            var result = new ServiceResponse<List<Product>>();
+            var result = new ServiceResponse<PagedResult<Product>>();
             try
             {
                 IQueryable<Product> query = _dataContext.Products;
@@ -150,7 +151,16 @@ namespace P05Shop.API.Services
                     query = query.Where(p => p.Title.Contains(text) || p.Description.Contains(text));
                 }
 
-                result.Data = await query.OrderBy(x=>x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                var totalCount = await query.CountAsync();
+
+                var data= await query.OrderBy(x=>x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                result.Data = new PagedResult<Product>()
+                {
+                    Items = data,
+                    TotalCount = totalCount
+                };
+
 
                 result.Success = true;
                 result.Message = "Products retrieved successfully.";

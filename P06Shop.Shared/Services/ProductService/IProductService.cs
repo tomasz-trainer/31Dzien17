@@ -16,7 +16,7 @@ namespace P06Shop.Shared.Services.ProductService
 
         Task<ServiceResponse<Product>> UpdateProductAsync(Product product);
 
-        Task<ServiceResponse<List<Product>>> SearchProductsAsync(string? text, int page, int pageSize);
+        Task<ServiceResponse<PagedResult<Product>>> SearchProductsAsync(string? text, int page, int pageSize);
 
     }
 }
