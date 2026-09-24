@@ -1,4 +1,4 @@
-﻿@page "/products/productslist"
+﻿@page "/products/productslistlocal"
 
 @inject IProductService ProductService
 @inject NavigationManager NavigationManager
@@ -6,12 +6,6 @@
 <h3>ProductsList</h3>
 
 <p><NavLink href="products/createproduct" class="btn btn-primary">New product</NavLink></p>
-
-
-<div>
-    <input type="text" @bind="searchTerm" placeholder="Search by title..." class="form-control" />
-    <button class="btn btn-primary" @onclick="Search">Search</button>
-</div>
 
 
 @if (products == null)
@@ -32,11 +26,11 @@ else
             </tr>
         </thead>
         <tbody>
-            @if (!products.Any())
+            @if (!PagedProducts.Any())
             {
                 <tr><td colspan="6"><em>Brak produktów</em></td></tr>
             }
-            @foreach (var product in products)
+            @foreach (var product in PagedProducts)
             {
                 <tr>
                     <td>@product.Id</td>
@@ -59,7 +53,6 @@ else
 
     List<Product>? products;
     string message = "Loading products...";
-    string searchTerm = string.Empty;
 
     int currentPage = 1;
     const int pageSize = 10;
@@ -69,7 +62,23 @@ else
         ? 1
         : (int)Math.Ceiling(products.Count / (double)pageSize);
 
+    // wycinek listy odpowiadający bieżącej stronie - liczony na żywo z pełnej listy produktów
+    IEnumerable<Product> PagedProducts =>
+        products?.Skip((currentPage - 1) * pageSize).Take(pageSize) ?? Enumerable.Empty<Product>();
 
+    override protected async Task OnInitializedAsync()
+    {
+        var response = await ProductService.GetProductsAsync();
+
+        if (response.Success)
+        {
+            products = response.Data;
+        }
+        else
+        {
+            message = "Server error, can't download products data";
+        }
+    }
 
     void EditProduct(int productId)
     {
@@ -77,51 +86,19 @@ else
         NavigationManager.NavigateTo($"/products/editproduct/{productId}");
     }
 
-    async Task NextPage()
+    void NextPage()
     {
         if (currentPage < TotalPages)
         {
             currentPage++;
-            await LoadProducts();
         }
     }
 
-    async Task PreviousPage()
+    void PreviousPage()
     {
         if (currentPage > 1)
         {
             currentPage--;
-            await LoadProducts();
-        }
-    }
-
-    override protected async Task OnInitializedAsync()
-    {
-        await LoadProducts();
-    }
-
-    async Task Search()
-    {
-        await LoadProducts();
-    }
-
-    async Task LoadProducts()
-    {
-        try
-        {
-            var response = await ProductService.SearchProductsAsync(searchTerm,currentPage,pageSize);
-            if (response.Success)
-            {
-                products = response.Data;
-            }else
-            {
-                products = new List<Product>();
-                message = $"Error loading products: {response.Message}";
-            }
-        }
-        catch (Exception ex)
-        {
-            message = $"Error loading products: {ex.Message}";
         }
     }
 }
