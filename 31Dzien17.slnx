@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="P05Shop.API/P05Shop.API.csproj" />
+  <Project Path="P06Shop.Shared/P06Shop.Shared.csproj" />
+  <Project Path="P07Shop.DataSeeder/P07Shop.DataSeeder.csproj" />
+  <Project Path="P11BlazorWebAssembly.Client/P11BlazorWebAssembly.Client.csproj" Id="b8d8c043-becb-4172-a06f-42edd6003d8c" />
+</Solution>
